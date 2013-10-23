@@ -63,13 +63,28 @@
    		box-sizing: border-box;
    		padding-top: 50px;
    		z-index:1;
+         webkit-transform: translate3d(0,0,0);
    	}
    	body, html, #main {
    		height: 100%;
    		min-height: 100%;
    		overflow: hidden;
    	}
+      #alert {
+         position: absolute;
+         width: 500px;
+         height: 100px;
+         margin: auto;
+         top: 80px; left: 0; bottom: 0; right: 0;
+         display: none;
+      }
    	#resourcetype { float: left;}
+      .greeting {
+         position: fixed;
+         width: 50%; 
+         margin: 0 auto;
+         top: 50px; left: 0; right: 0;
+      }
    </style>
  </head>
  <body>
@@ -214,6 +229,11 @@
  		</div><!-- /.modal-dialog -->
  	</div><!-- /.modal -->
  	<div id="main" class="container">
+      <div class="greeting alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <strong>Get started!</strong> Shift left click on a producer to send a message or click help for more options.
+      </div>
+      <div id="alert"></div>
  		<svg height="100%" width="100%">
  			<defs>
  				<linearGradient id="green" x1="0"  x2="0" y1="0" y2="1">
@@ -244,6 +264,13 @@ var debug;
 
 var radius = 40;
 
+function showalert(message,alerttype) {
+ $('#alert').show().append('<div id="alertdiv" class="alert ' +  alerttype + '"><a class="close" data-dismiss="alert">×</a><span>'+message+'</span></div>')
+ setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+   $("#alertdiv").remove();
+   $('#alert').hide()
+ }, 3000);
+}
 
 var svg = d3.select('svg');
 
@@ -492,7 +519,7 @@ function setPos() {
           			})(i,endNode);
           		}
           	}
-          } else { alert("Unable to create bindings from " + sType + "s to " + dType + "s"); }
+          } else { showalert("<strong>Error:</strong> Unable to create bindings from " + sType + "s to " + dType + "s","alert-danger"); }
           // Redraw binds
           bindingAppend();
         }
@@ -688,7 +715,7 @@ function translateAlong(path) {
 function routeMessage(message,path,bind) {
 	var destType = bind.destination_type + "s";
 	message.transition()
-	.duration(1000)
+	.duration(1400)
 	.attrTween("transform", translateAlong(path))
 	.each('end', function (d) {
 		var destBinds = config.bindings.filter(function(d){return d.source === bind.destination});
