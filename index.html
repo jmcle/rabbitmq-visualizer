@@ -449,6 +449,9 @@ function setPos() {
 		.attr('text-anchor', 'middle')
 		.attr('y', 4)
 		.on("click", function (d) {
+			if (d3.event.shiftKey) {
+        			return;
+        		}
 			if (d.resource_type === "exchange") {
 				$('#' + exchangeType[d.type]).button('toggle');
 				$("#exchangetype").show();
@@ -834,6 +837,9 @@ function redraw() {
 // REGISTER EVENT TO CREATE NEW OBJECTS
 
 svg.on("dblclick", function () {
+	if (d3.event.shiftKey) {
+      		return;
+   	}
 	var p = d3.mouse(this),
 	id = uid();
 	type = newResourceType + "s";
